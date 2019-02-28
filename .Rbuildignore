@@ -1,0 +1,4 @@
+^node_modules$
+^srcjs$
+^colorpicker\.Rproj$
+^\.Rproj\.user$
