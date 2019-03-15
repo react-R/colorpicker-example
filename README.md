@@ -21,7 +21,7 @@ tools are necessary regardless of your platform:
 
 ## R Build Requirements
 
-You should install the `reactR` package if you haven't, as this widget depends
+You should install the `reactR` package if you haven't, as this input depends
 on it.
 
 ## Development Workflow
@@ -36,7 +36,7 @@ yarn install
 Now, run `yarn` to build `www/colorpicker/colorpicker/colorpicker.js`:
 
 ```
-yarn run webpack --mode=development
+yarn run webpack
 ```
 
 > To run `yarn webpack` automatically whenever sources change, use the command
