@@ -1,4 +1,4 @@
-import { reactInput } from 'reactR';
+import { reactShinyInput } from 'reactR';
 import * as pickers from 'react-color';
 
 const PickerInput = ({ configuration, value, setValue }) => {
@@ -10,4 +10,4 @@ const PickerInput = ({ configuration, value, setValue }) => {
 };
 
 
-reactInput('.colorpicker', 'reactR.colorpicker', PickerInput);
+reactShinyInput('.colorpicker', 'reactR.colorpicker', PickerInput);

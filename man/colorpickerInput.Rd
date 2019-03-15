@@ -4,7 +4,9 @@
 \alias{colorpickerInput}
 \title{<Add Title>}
 \usage{
-colorpickerInput(inputId, defaultColor = "#fff", type = picker_types)
+colorpickerInput(inputId, defaultColor = "#fff", type = c("sketch",
+  "alpha", "block", "chrome", "circle", "compact", "github", "hue",
+  "material", "photoshop", "slider", "swatches", "twitter"))
 }
 \description{
 <Add Description>

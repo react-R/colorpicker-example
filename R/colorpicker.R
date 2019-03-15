@@ -1,19 +1,3 @@
-picker_types <- c(
-  "sketch",
-  "alpha",
-  "block",
-  "chrome",
-  "circle",
-  "compact",
-  "github",
-  "hue",
-  "material",
-  "photoshop",
-  "slider",
-  "swatches",
-  "twitter"
-)
-
 capitalize <- function(s) {
   gsub("^(.)", perl = TRUE, replacement = '\\U\\1', s)
 }
@@ -23,14 +7,30 @@ capitalize <- function(s) {
 #' <Add Description>
 #'
 #' @importFrom shiny restoreInput
-#' @importFrom reactR createReactInput
+#' @importFrom reactR createReactShinyInput
 #' @importFrom htmltools htmlDependency tags
 #'
 #' @export
-colorpickerInput <- function(inputId, defaultColor = "#fff", type = picker_types) {
+colorpickerInput <- function(inputId,
+                             defaultColor = "#fff",
+                             type = c(
+                               "sketch",
+                               "alpha",
+                               "block",
+                               "chrome",
+                               "circle",
+                               "compact",
+                               "github",
+                               "hue",
+                               "material",
+                               "photoshop",
+                               "slider",
+                               "swatches",
+                               "twitter"
+                             )) {
   color <- restoreInput(id = inputId, default = defaultColor)
   type <- paste0(capitalize(match.arg(type)), "Picker")
-  createReactInput(
+  createReactShinyInput(
     inputId,
     "colorpicker",
     htmlDependency(

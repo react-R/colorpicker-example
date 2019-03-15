@@ -17620,7 +17620,7 @@ var PickerInput = function PickerInput(_ref) {
   });
 };
 
-Object(reactR__WEBPACK_IMPORTED_MODULE_0__["reactInput"])('.colorpicker', 'reactR.colorpicker', PickerInput);
+Object(reactR__WEBPACK_IMPORTED_MODULE_0__["reactShinyInput"])('.colorpicker', 'reactR.colorpicker', PickerInput);
 
 /***/ }),
 

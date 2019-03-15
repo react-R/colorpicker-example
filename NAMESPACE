@@ -3,5 +3,5 @@
 export(colorpickerInput)
 importFrom(htmltools,htmlDependency)
 importFrom(htmltools,tags)
-importFrom(reactR,createReactInput)
+importFrom(reactR,createReactShinyInput)
 importFrom(shiny,restoreInput)
