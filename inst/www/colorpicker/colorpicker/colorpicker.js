@@ -17613,9 +17613,9 @@ var PickerInput = function PickerInput(_ref) {
       setValue = _ref.setValue;
   var picker = react_color__WEBPACK_IMPORTED_MODULE_1__[configuration.type];
   return React.createElement(picker, {
-    color: value,
+    color: value.rgb,
     onChangeComplete: function onChangeComplete(color) {
-      return setValue(color.hex);
+      return setValue;
     }
   });
 };

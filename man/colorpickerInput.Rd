@@ -2,12 +2,45 @@
 % Please edit documentation in R/colorpicker.R
 \name{colorpickerInput}
 \alias{colorpickerInput}
-\title{<Add Title>}
+\title{Create a color picker input}
 \usage{
-colorpickerInput(inputId, defaultColor = "#fff", type = c("sketch",
+colorpickerInput(inputId, defaultColor = "#ffffff", type = c("sketch",
   "alpha", "block", "chrome", "circle", "compact", "github", "hue",
   "material", "photoshop", "slider", "swatches", "twitter"))
 }
+\arguments{
+\item{inputId}{The \code{input} slot that will be used to access the chosen
+color, represented as an \link[=grDevices::col2rgb]{R color} like
+\code{"#00ff00"}.}
+
+\item{defaultColor}{The color value to initialize the picker with; defaults
+to \code{"#ffffff"} (white).}
+
+\item{type}{The lower-case name of the react-color picker type; defaults to
+\code{"sketch"}. The following types are available:
+\describe{
+  \item{sketch}{TODO}
+  \item{alpha}{TODO}
+  \item{block}{TODO}
+  \item{chrome}{TODO}
+  \item{circle}{TODO}
+  \item{compact}{TODO}
+  \item{github}{TODO}
+  \item{hue}{TODO}
+  \item{material}{TODO}
+  \item{photoshop}{TODO}
+  \item{slider}{TODO}
+  \item{swatches}{TODO}
+  \item{twitter}{TODO}
+}}
+}
+\value{
+A color picker widget suitable for inclusion in a Shiny UI.
+}
 \description{
-<Add Description>
+Creates a color picker input powered by the
+\href{https://github.com/casesandberg/react-color}{react-color} JavaScript
+library. There are 13 available types of picker, each with a different look
+and behavior. The picker type is determined by the value of the \code{type}
+argument.
 }
