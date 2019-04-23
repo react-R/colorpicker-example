@@ -3,13 +3,13 @@ library(colorpicker)
 
 ui <- fluidPage(
   titlePanel("reactR Input Example"),
-  colorpickerInput("textInput", type = "sketch"),
+  colorpickerInput("color", type = "twitter"),
   textOutput("textOutput")
 )
 
 server <- function(input, output, session) {
   output$textOutput <- renderText({
-    sprintf("You entered: %s", input$textInput)
+    sprintf("You entered: %s", capture.output(dput(input$color)))
   })
 }
 

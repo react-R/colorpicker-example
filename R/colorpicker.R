@@ -2,41 +2,53 @@ capitalize <- function(s) {
   gsub("^(.)", perl = TRUE, replacement = '\\U\\1', s)
 }
 
-as_react_color_rgba <- function(r_color) {
+# Converts an "R color" as defined by col2rgb() to a named list with r, g, b,
+# and a keys. The 'a'
+as_react_color <- function(r_color) {
   rgba <- col2rgb(r_color, alpha = TRUE)
   row.names(rgba) <- substr(row.names(rgba), 1, 1)
+  rgba <- as.list(t(rgba)[1,])
+  # Convert alpha from 0-255 (R format) to 0-1 (react-color format)
+  rgba$a <- (1/255)*rgba$a
   rgba
+}
+
+as_r_color <- function(react_color) {
+  # Convert alpha from 0-1 (react-color format) to 0-25 (R format)
+  alpha <- (255/1)*react_color$a
+  rgb(react_color$r, react_color$g, react_color$b, alpha, maxColorValue = 255)
 }
 
 #' Create a color picker input
 #'
 #' Creates a color picker input powered by the
 #' \href{https://github.com/casesandberg/react-color}{react-color} JavaScript
-#' library. There are 13 available types of picker, each with a different look
-#' and behavior. The picker type is determined by the value of the \code{type}
-#' argument.
+#' library. There are 13 available types of picker, each with a different
+#' appearance and behavior. The picker type is determined by the value of the
+#' \code{type} argument.
 #'
 #' @param inputId The \code{input} slot that will be used to access the chosen
-#'   color, represented as an \link[=grDevices::col2rgb]{R color} like
-#'   \code{"#00ff00"}.
-#' @param defaultColor The color value to initialize the picker with; defaults
-#'   to \code{"#ffffff"} (white).
+#'   color value. The color value is a hexadecimal string of the form
+#'   \code{"#rrggbb"} or \code{"#rrggbbaa"}.
+#' @param defaultColor An R color as accepted by
+#'   \code{\link[grDevices]{col2rgb}} to serve as the initial value of the
+#'   input. Defaults to \code{"#ffffff"} (white).
 #' @param type The lower-case name of the react-color picker type; defaults to
 #'   \code{"sketch"}. The following types are available:
-#'   \describe{
-#'     \item{sketch}{TODO}
-#'     \item{alpha}{TODO}
-#'     \item{block}{TODO}
-#'     \item{chrome}{TODO}
-#'     \item{circle}{TODO}
-#'     \item{compact}{TODO}
-#'     \item{github}{TODO}
-#'     \item{hue}{TODO}
-#'     \item{material}{TODO}
-#'     \item{photoshop}{TODO}
-#'     \item{slider}{TODO}
-#'     \item{swatches}{TODO}
-#'     \item{twitter}{TODO}
+#'   \itemize{
+#'     \item \code{"sketch"}
+#'     \item \code{"alpha"}
+#'     \item \code{"block"}
+#'     \item \code{"chrome"}
+#'     \item \code{"circle"}
+#'     \item \code{"compact"}
+#'     \item \code{"github"}
+#'     \item \code{"hue"}
+#'     \item \code{"material"}
+#'     \item \code{"photoshop"}
+#'     \item \code{"slider"}
+#'     \item \code{"swatches"}
+#'     \item \code{"twitter"}
 #'   }
 #'
 #'
@@ -64,6 +76,10 @@ colorpickerInput <- function(inputId,
                                "swatches",
                                "twitter"
                              )) {
+  # TODO Determine the idiomatic place to register a handler.
+  shiny::registerInputHandler("reactR.colorpicker", function(data, ...) {
+    as_r_color(data)
+  }, force = TRUE)
   createReactShinyInput(
     inputId,
     "colorpicker",
@@ -74,9 +90,9 @@ colorpickerInput <- function(inputId,
       package = "colorpicker",
       script = "colorpicker.js"
     ),
-    # TODO Decide what the color interface should be here.
-    list(rgb = as_react_color_rgba(defaultColor)),
+    as_react_color(defaultColor),
     list(type = paste0(capitalize(match.arg(type)), "Picker")),
     tags$div
   )
 }
+

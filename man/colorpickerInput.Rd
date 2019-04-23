@@ -10,28 +10,29 @@ colorpickerInput(inputId, defaultColor = "#ffffff", type = c("sketch",
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to access the chosen
-color, represented as an \link[=grDevices::col2rgb]{R color} like
-\code{"#00ff00"}.}
+color value. The color value is a hexadecimal string of the form
+\code{"#rrggbb"} or \code{"#rrggbbaa"}.}
 
-\item{defaultColor}{The color value to initialize the picker with; defaults
-to \code{"#ffffff"} (white).}
+\item{defaultColor}{An R color as accepted by
+\code{\link[grDevices]{col2rgb}} to serve as the initial value of the
+input. Defaults to \code{"#ffffff"} (white).}
 
 \item{type}{The lower-case name of the react-color picker type; defaults to
 \code{"sketch"}. The following types are available:
-\describe{
-  \item{sketch}{TODO}
-  \item{alpha}{TODO}
-  \item{block}{TODO}
-  \item{chrome}{TODO}
-  \item{circle}{TODO}
-  \item{compact}{TODO}
-  \item{github}{TODO}
-  \item{hue}{TODO}
-  \item{material}{TODO}
-  \item{photoshop}{TODO}
-  \item{slider}{TODO}
-  \item{swatches}{TODO}
-  \item{twitter}{TODO}
+\itemize{
+  \item \code{"sketch"}
+  \item \code{"alpha"}
+  \item \code{"block"}
+  \item \code{"chrome"}
+  \item \code{"circle"}
+  \item \code{"compact"}
+  \item \code{"github"}
+  \item \code{"hue"}
+  \item \code{"material"}
+  \item \code{"photoshop"}
+  \item \code{"slider"}
+  \item \code{"swatches"}
+  \item \code{"twitter"}
 }}
 }
 \value{
@@ -40,7 +41,7 @@ A color picker widget suitable for inclusion in a Shiny UI.
 \description{
 Creates a color picker input powered by the
 \href{https://github.com/casesandberg/react-color}{react-color} JavaScript
-library. There are 13 available types of picker, each with a different look
-and behavior. The picker type is determined by the value of the \code{type}
-argument.
+library. There are 13 available types of picker, each with a different
+appearance and behavior. The picker type is determined by the value of the
+\code{type} argument.
 }
