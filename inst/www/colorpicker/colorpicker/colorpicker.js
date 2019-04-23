@@ -9087,7 +9087,8 @@ function _interopRequireDefault(obj) {
 }
 
 var Chrome = exports.Chrome = function Chrome(_ref) {
-  var onChange = _ref.onChange,
+  var width = _ref.width,
+      onChange = _ref.onChange,
       disableAlpha = _ref.disableAlpha,
       rgb = _ref.rgb,
       hsl = _ref.hsl,
@@ -9101,11 +9102,11 @@ var Chrome = exports.Chrome = function Chrome(_ref) {
   var styles = (0, _reactcss2.default)((0, _merge2.default)({
     'default': {
       picker: {
+        width: width,
         background: '#fff',
         borderRadius: '2px',
         boxShadow: '0 0 2px rgba(0,0,0,.3), 0 4px 8px rgba(0,0,0,.3)',
         boxSizing: 'initial',
-        width: '225px',
         fontFamily: 'Menlo'
       },
       saturation: {
@@ -9232,10 +9233,12 @@ var Chrome = exports.Chrome = function Chrome(_ref) {
 };
 
 Chrome.propTypes = {
+  width: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.number]),
   disableAlpha: _propTypes2.default.bool,
   styles: _propTypes2.default.object
 };
 Chrome.defaultProps = {
+  width: 225,
   disableAlpha: false,
   styles: {}
 };
@@ -10115,11 +10118,11 @@ var Alpha = exports.Alpha = function (_ref) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref2 = Alpha.__proto__ || Object.getPrototypeOf(Alpha)).call.apply(_ref2, [this].concat(args))), _this), _this.handleChange = function (e, skip) {
-      var change = alpha.calculateChange(e, skip, _this.props, _this.container);
-      change && _this.props.onChange && _this.props.onChange(change, e);
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref2 = Alpha.__proto__ || Object.getPrototypeOf(Alpha)).call.apply(_ref2, [this].concat(args))), _this), _this.handleChange = function (e) {
+      var change = alpha.calculateChange(e, _this.props.hsl, _this.props.direction, _this.props.a, _this.container);
+      change && typeof _this.props.onChange === 'function' && _this.props.onChange(change, e);
     }, _this.handleMouseDown = function (e) {
-      _this.handleChange(e, true);
+      _this.handleChange(e);
 
       window.addEventListener('mousemove', _this.handleChange);
       window.addEventListener('mouseup', _this.handleMouseUp);
@@ -10576,6 +10579,27 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var DEFAULT_ARROW_OFFSET = 1;
+var UP_KEY_CODE = 38;
+var DOWN_KEY_CODE = 40;
+var VALID_KEY_CODES = [UP_KEY_CODE, DOWN_KEY_CODE];
+
+var isValidKeyCode = function isValidKeyCode(keyCode) {
+  return VALID_KEY_CODES.indexOf(keyCode) > -1;
+};
+
+var getFormattedPercentage = function getFormattedPercentage(number) {
+  return number + '%';
+};
+
+var getNumberValue = function getNumberValue(value) {
+  return Number(String(value).replace(/%/g, ''));
+};
+
+var getIsPercentage = function getIsPercentage(value) {
+  return String(value).indexOf('%') > -1;
+};
+
 var EditableInput = exports.EditableInput = function (_ref) {
   _inherits(EditableInput, _ref);
 
@@ -10594,64 +10618,21 @@ var EditableInput = exports.EditableInput = function (_ref) {
     };
 
     _this.handleChange = function (e) {
-      if (_this.props.label) {
-        _this.props.onChange && _this.props.onChange(_defineProperty({}, _this.props.label, e.target.value), e);
-      } else {
-        _this.props.onChange && _this.props.onChange(e.target.value, e);
-      }
-
-      _this.setState({
-        value: e.target.value
-      });
+      _this.setUpdatedValue(e.target.value, e);
     };
 
     _this.handleKeyDown = function (e) {
       // In case `e.target.value` is a percentage remove the `%` character
       // and update accordingly with a percentage
       // https://github.com/casesandberg/react-color/issues/383
-      var stringValue = String(e.target.value);
-      var isPercentage = stringValue.indexOf('%') > -1;
-      var number = Number(stringValue.replace(/%/g, ''));
+      var value = getNumberValue(e.target.value);
 
-      if (!isNaN(number)) {
-        var amount = _this.props.arrowOffset || 1; // Up
+      if (!isNaN(value) && isValidKeyCode(e.keyCode)) {
+        var offset = _this.getArrowOffset();
 
-        if (e.keyCode === 38) {
-          if (_this.props.label !== null) {
-            _this.props.onChange && _this.props.onChange(_defineProperty({}, _this.props.label, number + amount), e);
-          } else {
-            _this.props.onChange && _this.props.onChange(number + amount, e);
-          }
+        var updatedValue = e.keyCode === UP_KEY_CODE ? value + offset : value - offset;
 
-          if (isPercentage) {
-            _this.setState({
-              value: number + amount + '%'
-            });
-          } else {
-            _this.setState({
-              value: number + amount
-            });
-          }
-        } // Down
-
-
-        if (e.keyCode === 40) {
-          if (_this.props.label !== null) {
-            _this.props.onChange && _this.props.onChange(_defineProperty({}, _this.props.label, number - amount), e);
-          } else {
-            _this.props.onChange && _this.props.onChange(number - amount, e);
-          }
-
-          if (isPercentage) {
-            _this.setState({
-              value: number - amount + '%'
-            });
-          } else {
-            _this.setState({
-              value: number - amount
-            });
-          }
-        }
+        _this.setUpdatedValue(updatedValue, e);
       }
     };
 
@@ -10660,7 +10641,7 @@ var EditableInput = exports.EditableInput = function (_ref) {
         var newValue = Math.round(_this.props.value + e.movementX);
 
         if (newValue >= 0 && newValue <= _this.props.dragMax) {
-          _this.props.onChange && _this.props.onChange(_defineProperty({}, _this.props.label, newValue), e);
+          _this.props.onChange && _this.props.onChange(_this.getValueObjectWithLabel(newValue), e);
         }
       }
     };
@@ -10714,6 +10695,26 @@ var EditableInput = exports.EditableInput = function (_ref) {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
       this.unbindEventListeners();
+    }
+  }, {
+    key: 'getValueObjectWithLabel',
+    value: function getValueObjectWithLabel(value) {
+      return _defineProperty({}, this.props.label, value);
+    }
+  }, {
+    key: 'getArrowOffset',
+    value: function getArrowOffset() {
+      return this.props.arrowOffset || DEFAULT_ARROW_OFFSET;
+    }
+  }, {
+    key: 'setUpdatedValue',
+    value: function setUpdatedValue(value, e) {
+      var onChangeValue = this.props.label !== null ? this.getValueObjectWithLabel(value) : value;
+      this.props.onChange && this.props.onChange(onChangeValue, e);
+      var isPercentage = getIsPercentage(e.target.value);
+      this.setState({
+        value: isPercentage ? getFormattedPercentage(value) : value
+      });
     }
   }, {
     key: 'render',
@@ -10880,11 +10881,11 @@ var Hue = exports.Hue = function (_ref) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref2 = Hue.__proto__ || Object.getPrototypeOf(Hue)).call.apply(_ref2, [this].concat(args))), _this), _this.handleChange = function (e, skip) {
-      var change = hue.calculateChange(e, skip, _this.props, _this.container);
-      change && _this.props.onChange && _this.props.onChange(change, e);
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref2 = Hue.__proto__ || Object.getPrototypeOf(Hue)).call.apply(_ref2, [this].concat(args))), _this), _this.handleChange = function (e) {
+      var change = hue.calculateChange(e, _this.props.direction, _this.props.hsl, _this.container);
+      change && typeof _this.props.onChange === 'function' && _this.props.onChange(change, e);
     }, _this.handleMouseDown = function (e) {
-      _this.handleChange(e, true);
+      _this.handleChange(e);
 
       window.addEventListener('mousemove', _this.handleChange);
       window.addEventListener('mouseup', _this.handleMouseUp);
@@ -11213,12 +11214,12 @@ var Saturation = exports.Saturation = function (_ref) {
 
     var _this = _possibleConstructorReturn(this, (Saturation.__proto__ || Object.getPrototypeOf(Saturation)).call(this, props));
 
-    _this.handleChange = function (e, skip) {
-      _this.props.onChange && _this.throttle(_this.props.onChange, saturation.calculateChange(e, skip, _this.props, _this.container), e);
+    _this.handleChange = function (e) {
+      typeof _this.props.onChange === 'function' && _this.throttle(_this.props.onChange, saturation.calculateChange(e, _this.props.hsl, _this.container), e);
     };
 
     _this.handleMouseDown = function (e) {
-      _this.handleChange(e, true);
+      _this.handleChange(e);
 
       window.addEventListener('mousemove', _this.handleChange);
       window.addEventListener('mouseup', _this.handleMouseUp);
@@ -12059,7 +12060,7 @@ var Github = exports.Github = function Github(_ref) {
     'hide-triangle': triangle === 'hide',
     'top-left-triangle': triangle === 'top-left',
     'top-right-triangle': triangle === 'top-right',
-    'bottom-left-triangle': triangle == 'bottom-left',
+    'bottom-left-triangle': triangle === 'bottom-left',
     'bottom-right-triangle': triangle === 'bottom-right'
   });
 
@@ -12799,7 +12800,7 @@ exports.default = (0, _common.ColorWrap)(Photoshop);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.PhotoshopBotton = undefined;
+exports.PhotoshopButton = undefined;
 
 var _react = __webpack_require__(/*! react */ "react");
 
@@ -12815,7 +12816,7 @@ function _interopRequireDefault(obj) {
   };
 }
 
-var PhotoshopBotton = exports.PhotoshopBotton = function PhotoshopBotton(_ref) {
+var PhotoshopButton = exports.PhotoshopButton = function PhotoshopButton(_ref) {
   var onClick = _ref.onClick,
       label = _ref.label,
       children = _ref.children,
@@ -12850,7 +12851,7 @@ var PhotoshopBotton = exports.PhotoshopBotton = function PhotoshopBotton(_ref) {
   }, label || children);
 };
 
-exports.default = PhotoshopBotton;
+exports.default = PhotoshopButton;
 
 /***/ }),
 
@@ -13875,7 +13876,7 @@ var Slider = exports.Slider = function Slider(_ref) {
     }
   }, passedStyles));
   return _react2.default.createElement('div', {
-    style: styles.wrap || '',
+    style: styles.wrap || {},
     className: 'slider-picker ' + className
   }, _react2.default.createElement('div', {
     style: styles.hue
@@ -14091,7 +14092,9 @@ var SliderSwatches = exports.SliderSwatches = function SliderSwatches(_ref) {
         clear: 'both'
       }
     }
-  });
+  }); // Acceptible difference in floating point equality
+
+  var epsilon = 0.1;
   return _react2.default.createElement('div', {
     style: styles.swatches
   }, _react2.default.createElement('div', {
@@ -14099,7 +14102,7 @@ var SliderSwatches = exports.SliderSwatches = function SliderSwatches(_ref) {
   }, _react2.default.createElement(_SliderSwatch2.default, {
     hsl: hsl,
     offset: '.80',
-    active: Math.round(hsl.l * 100) / 100 === 0.80 && Math.round(hsl.s * 100) / 100 === 0.50,
+    active: Math.abs(hsl.l - 0.80) < epsilon && Math.abs(hsl.s - 0.50) < epsilon,
     onClick: onClick,
     first: true
   })), _react2.default.createElement('div', {
@@ -14107,28 +14110,28 @@ var SliderSwatches = exports.SliderSwatches = function SliderSwatches(_ref) {
   }, _react2.default.createElement(_SliderSwatch2.default, {
     hsl: hsl,
     offset: '.65',
-    active: Math.round(hsl.l * 100) / 100 === 0.65 && Math.round(hsl.s * 100) / 100 === 0.50,
+    active: Math.abs(hsl.l - 0.65) < epsilon && Math.abs(hsl.s - 0.50) < epsilon,
     onClick: onClick
   })), _react2.default.createElement('div', {
     style: styles.swatch
   }, _react2.default.createElement(_SliderSwatch2.default, {
     hsl: hsl,
     offset: '.50',
-    active: Math.round(hsl.l * 100) / 100 === 0.50 && Math.round(hsl.s * 100) / 100 === 0.50,
+    active: Math.abs(hsl.l - 0.50) < epsilon && Math.abs(hsl.s - 0.50) < epsilon,
     onClick: onClick
   })), _react2.default.createElement('div', {
     style: styles.swatch
   }, _react2.default.createElement(_SliderSwatch2.default, {
     hsl: hsl,
     offset: '.35',
-    active: Math.round(hsl.l * 100) / 100 === 0.35 && Math.round(hsl.s * 100) / 100 === 0.50,
+    active: Math.abs(hsl.l - 0.35) < epsilon && Math.abs(hsl.s - 0.50) < epsilon,
     onClick: onClick
   })), _react2.default.createElement('div', {
     style: styles.swatch
   }, _react2.default.createElement(_SliderSwatch2.default, {
     hsl: hsl,
     offset: '.20',
-    active: Math.round(hsl.l * 100) / 100 === 0.20 && Math.round(hsl.s * 100) / 100 === 0.50,
+    active: Math.abs(hsl.l - 0.20) < epsilon && Math.abs(hsl.s - 0.50) < epsilon,
     onClick: onClick,
     last: true
   })), _react2.default.createElement('div', {
@@ -14705,7 +14708,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var calculateChange = exports.calculateChange = function calculateChange(e, skip, props, container) {
+var calculateChange = exports.calculateChange = function calculateChange(e, hsl, direction, initialA, container) {
   e.preventDefault();
   var containerWidth = container.clientWidth;
   var containerHeight = container.clientHeight;
@@ -14714,7 +14717,7 @@ var calculateChange = exports.calculateChange = function calculateChange(e, skip
   var left = x - (container.getBoundingClientRect().left + window.pageXOffset);
   var top = y - (container.getBoundingClientRect().top + window.pageYOffset);
 
-  if (props.direction === 'vertical') {
+  if (direction === 'vertical') {
     var a = void 0;
 
     if (top < 0) {
@@ -14725,11 +14728,11 @@ var calculateChange = exports.calculateChange = function calculateChange(e, skip
       a = Math.round(top * 100 / containerHeight) / 100;
     }
 
-    if (props.hsl.a !== a) {
+    if (hsl.a !== a) {
       return {
-        h: props.hsl.h,
-        s: props.hsl.s,
-        l: props.hsl.l,
+        h: hsl.h,
+        s: hsl.s,
+        l: hsl.l,
         a: a,
         source: 'rgb'
       };
@@ -14745,11 +14748,11 @@ var calculateChange = exports.calculateChange = function calculateChange(e, skip
       _a = Math.round(left * 100 / containerWidth) / 100;
     }
 
-    if (props.a !== _a) {
+    if (initialA !== _a) {
       return {
-        h: props.hsl.h,
-        s: props.hsl.s,
-        l: props.hsl.l,
+        h: hsl.h,
+        s: hsl.s,
+        l: hsl.l,
         a: _a,
         source: 'rgb'
       };
@@ -14802,12 +14805,12 @@ var render = exports.render = function render(c1, c2, size, serverCanvas) {
 
 var get = exports.get = function get(c1, c2, size, serverCanvas) {
   var key = c1 + '-' + c2 + '-' + size + (serverCanvas ? '-server' : '');
-  var checkboard = render(c1, c2, size, serverCanvas);
 
   if (checkboardCache[key]) {
     return checkboardCache[key];
   }
 
+  var checkboard = render(c1, c2, size, serverCanvas);
   checkboardCache[key] = checkboard;
   return checkboard;
 };
@@ -14947,7 +14950,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var calculateChange = exports.calculateChange = function calculateChange(e, skip, props, container) {
+var calculateChange = exports.calculateChange = function calculateChange(e, direction, hsl, container) {
   e.preventDefault();
   var containerWidth = container.clientWidth;
   var containerHeight = container.clientHeight;
@@ -14956,7 +14959,7 @@ var calculateChange = exports.calculateChange = function calculateChange(e, skip
   var left = x - (container.getBoundingClientRect().left + window.pageXOffset);
   var top = y - (container.getBoundingClientRect().top + window.pageYOffset);
 
-  if (props.direction === 'vertical') {
+  if (direction === 'vertical') {
     var h = void 0;
 
     if (top < 0) {
@@ -14968,12 +14971,12 @@ var calculateChange = exports.calculateChange = function calculateChange(e, skip
       h = 360 * percent / 100;
     }
 
-    if (props.hsl.h !== h) {
+    if (hsl.h !== h) {
       return {
         h: h,
-        s: props.hsl.s,
-        l: props.hsl.l,
-        a: props.hsl.a,
+        s: hsl.s,
+        l: hsl.l,
+        a: hsl.a,
         source: 'rgb'
       };
     }
@@ -14990,12 +14993,12 @@ var calculateChange = exports.calculateChange = function calculateChange(e, skip
       _h = 360 * _percent / 100;
     }
 
-    if (props.hsl.h !== _h) {
+    if (hsl.h !== _h) {
       return {
         h: _h,
-        s: props.hsl.s,
-        l: props.hsl.l,
-        a: props.hsl.a,
+        s: hsl.s,
+        l: hsl.l,
+        a: hsl.a,
         source: 'rgb'
       };
     }
@@ -15156,7 +15159,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var calculateChange = exports.calculateChange = function calculateChange(e, skip, props, container) {
+var calculateChange = exports.calculateChange = function calculateChange(e, hsl, container) {
   e.preventDefault();
 
   var _container$getBoundin = container.getBoundingClientRect(),
@@ -15181,10 +15184,10 @@ var calculateChange = exports.calculateChange = function calculateChange(e, skip
   var saturation = left * 100 / containerWidth;
   var bright = -(top * 100 / containerHeight) + 100;
   return {
-    h: props.hsl.h,
+    h: hsl.h,
     s: saturation,
     v: bright,
-    a: props.hsl.a,
+    a: hsl.a,
     source: 'rgb'
   };
 };
