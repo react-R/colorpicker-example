@@ -2,14 +2,26 @@ library(shiny)
 library(colorpicker)
 
 ui <- fluidPage(
-  titlePanel("reactR Input Example"),
-  colorpickerInput("color", type = "twitter"),
-  textOutput("textOutput")
+  titlePanel("colorpicker example"),
+  selectInput("pickerType", "Picker Type", eval(formals(colorpickerInput)$type)),
+  uiOutput("colorpicker"),
+  textOutput("chosenPicker"),
+  textOutput("chosenColor")
 )
 
 server <- function(input, output, session) {
-  output$textOutput <- renderText({
-    sprintf("You entered: %s", capture.output(dput(input$color)))
+  color <- reactiveVal("#ffffff")
+  observeEvent(input$color, color(input$color))
+
+  output$colorpicker <- renderUI({
+    colorpickerInput("color", color(), type = input$pickerType)
+  })
+
+  output$chosenPicker <- renderText({
+    sprintf("Selected picker: %s", input$pickerType)
+  })
+  output$chosenColor <- renderText({
+    sprintf("Selected color: %s", input$color)
   })
 }
 
