@@ -76,10 +76,6 @@ colorpickerInput <- function(inputId,
                                "swatches",
                                "twitter"
                              )) {
-  # TODO Determine the idiomatic place to register a handler.
-  shiny::registerInputHandler("reactR.colorpicker", function(data, ...) {
-    as_r_color(data)
-  }, force = TRUE)
   createReactShinyInput(
     inputId,
     "colorpicker",
@@ -96,3 +92,8 @@ colorpickerInput <- function(inputId,
   )
 }
 
+.onLoad <- function(...) {
+  shiny::registerInputHandler("reactR.colorpicker", function(data, ...) {
+    as_r_color(data)
+  })
+}
