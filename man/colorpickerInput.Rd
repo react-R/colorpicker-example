@@ -6,7 +6,7 @@
 \usage{
 colorpickerInput(inputId, defaultColor = "#ffffff", type = c("sketch",
   "alpha", "block", "chrome", "circle", "compact", "github", "hue",
-  "material", "photoshop", "slider", "swatches", "twitter"))
+  "photoshop", "slider", "swatches", "twitter"))
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to access the chosen
@@ -28,7 +28,6 @@ input. Defaults to \code{"#ffffff"} (white).}
   \item \code{"compact"}
   \item \code{"github"}
   \item \code{"hue"}
-  \item \code{"material"}
   \item \code{"photoshop"}
   \item \code{"slider"}
   \item \code{"swatches"}

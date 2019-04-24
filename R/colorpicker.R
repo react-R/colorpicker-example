@@ -44,7 +44,6 @@ as_r_color <- function(react_color) {
 #'     \item \code{"compact"}
 #'     \item \code{"github"}
 #'     \item \code{"hue"}
-#'     \item \code{"material"}
 #'     \item \code{"photoshop"}
 #'     \item \code{"slider"}
 #'     \item \code{"swatches"}
@@ -70,7 +69,6 @@ colorpickerInput <- function(inputId,
                                "compact",
                                "github",
                                "hue",
-                               "material",
                                "photoshop",
                                "slider",
                                "swatches",
