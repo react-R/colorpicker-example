@@ -5,7 +5,7 @@ ui <- fluidPage(
   titlePanel("colorpicker example"),
   sidebarLayout(
     sidebarPanel(
-      selectInput("pickerType", "Picker Type", eval(formals(colorpickerInput)$type))   ,
+      selectInput("pickerType", "Picker Type", eval(formals(colorpickerInput)$type)),
       textOutput("chosenPicker"),
       textOutput("chosenColor")
     ),
