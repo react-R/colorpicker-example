@@ -3,10 +3,14 @@ library(colorpicker)
 
 ui <- fluidPage(
   titlePanel("colorpicker example"),
-  selectInput("pickerType", "Picker Type", eval(formals(colorpickerInput)$type)),
-  uiOutput("colorpicker"),
-  textOutput("chosenPicker"),
-  textOutput("chosenColor")
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("pickerType", "Picker Type", eval(formals(colorpickerInput)$type))   ,
+      textOutput("chosenPicker"),
+      textOutput("chosenColor")
+    ),
+    mainPanel(uiOutput("colorpicker"))
+  )
 )
 
 server <- function(input, output, session) {
