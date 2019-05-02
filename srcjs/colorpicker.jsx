@@ -11,4 +11,9 @@ const PickerInput = ({ configuration, value, setValue }) => {
   });
 };
 
-reactShinyInput('.colorpicker', 'reactR.colorpicker', PickerInput);
+reactShinyInput(
+  '.colorpicker',
+  'reactR.colorpicker',
+  PickerInput,
+  { type: "reactR.colorpicker.color" }
+);

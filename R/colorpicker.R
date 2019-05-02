@@ -91,7 +91,7 @@ colorpickerInput <- function(inputId,
 }
 
 .onLoad <- function(...) {
-  shiny::registerInputHandler("reactR.colorpicker", function(data, ...) {
+  shiny::registerInputHandler("reactR.colorpicker.color", function(data, ...) {
     as_r_color(data)
   })
 }
