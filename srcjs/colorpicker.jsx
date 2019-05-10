@@ -18,7 +18,7 @@ reactShinyInput(
   {
     type: "reactR.colorpicker.color",
     ratePolicy: {
-      policy: "debounce",
+      policy: "throttle",
       delay: 250
     }
   }
