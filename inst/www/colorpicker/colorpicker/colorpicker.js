@@ -17618,13 +17618,17 @@ var PickerInput = function PickerInput(_ref) {
   return React.createElement(picker, {
     color: value,
     onChangeComplete: function onChangeComplete(color) {
-      setValue(color.rgb);
+      setValue(color.rgb, true);
     }
   });
 };
 
 Object(reactR__WEBPACK_IMPORTED_MODULE_0__["reactShinyInput"])('.colorpicker', 'reactR.colorpicker', PickerInput, {
-  type: "reactR.colorpicker.color"
+  type: "reactR.colorpicker.color",
+  ratePolicy: {
+    policy: "debounce",
+    delay: 250
+  }
 });
 
 /***/ }),
