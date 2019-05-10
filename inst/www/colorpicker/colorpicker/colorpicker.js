@@ -17626,7 +17626,7 @@ var PickerInput = function PickerInput(_ref) {
 Object(reactR__WEBPACK_IMPORTED_MODULE_0__["reactShinyInput"])('.colorpicker', 'reactR.colorpicker', PickerInput, {
   type: "reactR.colorpicker.color",
   ratePolicy: {
-    policy: "debounce",
+    policy: "throttle",
     delay: 250
   }
 });
