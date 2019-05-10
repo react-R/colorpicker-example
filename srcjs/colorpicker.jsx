@@ -6,7 +6,7 @@ const PickerInput = ({ configuration, value, setValue }) => {
   return React.createElement(picker, {
     color: value,
     onChangeComplete: color => {
-      setValue(color.rgb)
+      setValue(color.rgb, true);
     }
   });
 };
@@ -15,5 +15,11 @@ reactShinyInput(
   '.colorpicker',
   'reactR.colorpicker',
   PickerInput,
-  { type: "reactR.colorpicker.color" }
+  {
+    type: "reactR.colorpicker.color",
+    ratePolicy: {
+      policy: "debounce",
+      delay: 250
+    }
+  }
 );
