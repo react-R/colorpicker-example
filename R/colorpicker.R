@@ -74,10 +74,10 @@ colorpickerInput <- function(inputId,
                                "swatches",
                                "twitter"
                              )) {
-  createReactShinyInput(
+  reactR::createReactShinyInput(
     inputId,
     "colorpicker",
-    htmlDependency(
+    htmltools::htmlDependency(
       name = "colorpicker-input",
       version = "1.0.0",
       src = "www/colorpicker/colorpicker",
